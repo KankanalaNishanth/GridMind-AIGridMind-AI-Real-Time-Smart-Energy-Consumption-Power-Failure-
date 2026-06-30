@@ -1,0 +1,7 @@
+{
+  "processed_rows": 156294,
+  "training_rows": 5000,
+  "forecast_model": "RandomForest fallback",
+  "demand_mae": 49167.733349999995,
+  "anomaly_model": "IsolationForest"
+}

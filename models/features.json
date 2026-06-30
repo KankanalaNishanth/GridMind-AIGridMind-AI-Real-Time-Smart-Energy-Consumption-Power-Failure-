@@ -1,0 +1,14 @@
+[
+  "total_services",
+  "billed_services",
+  "power_consumption_kwh",
+  "grid_load_kw",
+  "voltage",
+  "current",
+  "frequency",
+  "temperature_c",
+  "service_utilization",
+  "load_per_service",
+  "hour",
+  "day_of_week"
+]

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GridMind AI</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">GM</span>
+        <div>
+          <strong>GridMind AI</strong>
+          <small>Smart grid operations</small>
+        </div>
+      </div>
+      <nav>
+        <a href="#live">Live Grid</a>
+        <a href="#forecast">Forecast</a>
+        <a href="#alerts">Alerts</a>
+        <a href="#reports">Reports</a>
+      </nav>
+      <div class="connection">
+        <span id="statusDot"></span>
+        <span id="connectionText">Connecting</span>
+      </div>
+    </aside>
+
+    <main>
+      <section class="topbar">
+        <div>
+          <h1>Real-Time Energy Intelligence</h1>
+          <p>Demand forecasting, outage risk, and abnormal consumption monitoring for Telangana grid telemetry.</p>
+        </div>
+        <button id="refreshButton" type="button">Refresh</button>
+      </section>
+
+      <section class="metrics" id="live">
+        <article>
+          <span>Total Consumption</span>
+          <strong id="totalConsumption">0 kWh</strong>
+        </article>
+        <article>
+          <span>Average Load</span>
+          <strong id="averageLoad">0 kW</strong>
+        </article>
+        <article>
+          <span>Outage Risk</span>
+          <strong id="outageRisk">0%</strong>
+        </article>
+        <article>
+          <span>Anomalies</span>
+          <strong id="anomalyCount">0</strong>
+        </article>
+      </section>
+
+      <section class="grid">
+        <div class="panel wide" id="forecast">
+          <div class="panel-head">
+            <h2>Consumption and Forecast</h2>
+            <span id="latestArea">Waiting for telemetry</span>
+          </div>
+          <canvas id="usageChart" height="110"></canvas>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Grid Health</h2>
+            <span id="deviceStatus">Unknown</span>
+          </div>
+          <div class="gauge">
+            <div id="riskNeedle"></div>
+            <strong id="riskLabel">0%</strong>
+          </div>
+          <p id="recommendation">Start the API and stream telemetry to see AI recommendations.</p>
+        </div>
+
+        <div class="panel wide" id="alerts">
+          <div class="panel-head">
+            <h2>Recent Alerts</h2>
+            <span>AI outage and anomaly signals</span>
+          </div>
+          <div id="alertsList" class="alerts-list"></div>
+        </div>
+
+        <div class="panel" id="reports">
+          <div class="panel-head">
+            <h2>Portfolio Report</h2>
+            <span>Circle-level summary</span>
+          </div>
+          <div id="reportList" class="report-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+
