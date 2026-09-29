@@ -1,0 +1,30 @@
+{
+  "random_forest": {
+    "accuracy_pct": 100.0,
+    "roc_auc": 1.0
+  },
+  "isolation_forest": {
+    "anomalies_detected": 7815,
+    "anomaly_rate_pct": 5.0,
+    "normal_points": 148479
+  },
+  "sarima": {
+    "mae_million_kwh": 66.783,
+    "rmse_million_kwh": 103.119,
+    "mape_pct": 23.34
+  },
+  "kmeans": {
+    "silhouette_score": 0.261,
+    "n_clusters": 4
+  },
+  "saved_models": [
+    "circle_clusters.csv",
+    "iso_forest.pkl",
+    "kmeans.pkl",
+    "rf_disruption.pkl",
+    "sarima_last_month.txt",
+    "sarima_model.pkl",
+    "scaler_iso.pkl",
+    "scaler_kmeans.pkl"
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "rows_processed": 156294,
+  "circles": 16,
+  "isolation_forest": {
+    "anomalies_detected": 7815,
+    "anomaly_rate_pct": 5.0
+  },
+  "sarima": {
+    "forecast_steps": 6,
+    "forecast": [
+      {
+        "month": 18,
+        "predicted_units": 252348054.49585238
+      },
+      {
+        "month": 19,
+        "predicted_units": 256471926.45616585
+      },
+      {
+        "month": 20,
+        "predicted_units": 253922563.52984303
+      },
+      {
+        "month": 21,
+        "predicted_units": 255498570.59132686
+      },
+      {
+        "month": 22,
+        "predicted_units": 254524288.6512386
+      },
+      {
+        "month": 23,
+        "predicted_units": 255126586.26904777
+      }
+    ]
+  },
+  "kmeans": {
+    "n_clusters": 4,
+    "clusters": [
+      {
+        "Circle": "ADILABAD",
+        "avg_units": 14935.033657745336,
+        "total_units": 220978758.0,
+        "avg_connections": 218.18180589348472,
+        "avg_billing_ratio": 0.5445141575974177,
+        "avg_load_factor": 0.18859786008811102,
+        "disruption_rate": 0.4482292511489592,
+        "cluster": 3
+      },
+      {
+        "Circle": "ASIFABAD",
+        "avg_units": 10591.66057272286,
+        "total_units": 130934108.0,
+        "avg_connections": 171.88844847112117,
+        "avg_billing_ratio": 0.5501727691390907,
+        "avg_load_factor": 0.18935803575487892,
+        "disruption_rate": 0.4524348810872027,
+        "cluster": 3
+      },
+      {
+        "Circle": "BHADRADRI KOTHAGUDEM",
+        "avg_units": 23162.080022962113,
+        "total_units": 403483434.0,
+        "avg_connections": 309.25551090700344,
+        "avg_billing_ratio": 0.48155553918019167,
+        "avg_load_factor": 0.15147242985661635,
+        "disruption_rate": 0.49690011481056257,
+        "cluster": 2
+      },
+      {
+        "Circle": "BHUPALAPALLY",
+        "avg_units": 12518.117831346271,
+        "total_units": 143845692.0,
+        "avg_connections": 267.0741449830302,
+        "avg_billing_ratio": 0.45162255124350414,
+        "avg_load_factor": 0.11207472266422341,
+        "disruption_rate": 0.635801931946741,
+        "cluster": 2
+      },
+      {
+        "Circle": "HANUMAKONDA",
+        "avg_units": 71444.7356286971,
+        "total_units": 471035142.0,
+        "avg_connections": 833.135750037919,
+        "avg_billing_ratio": 0.6560890903718978,
+        "avg_load_factor": 0.10708062398026344,
+        "disruption_rate": 0.3622023358107083,
+        "cluster": 1
+      },
+      {
+        "Circle": "JAGITYAL",
+        "avg_units": 51511.65492935635,
+        "total_units": 360942166.09,
+        "avg_connections": 752.620522334808,
+        "avg_billing_ratio": 0.6350781028435883,
+        "avg_load_factor": 0.15319555799882997,
+        "disruption_rate": 0.3006993006993007,
+        "cluster": 1
+      },
+      {
+        "Circle": "JANGAON",
+        "avg_units": 23163.502511935367,
+        "total_units": 126148434.68,
+        "avg_connections": 502.4880646345942,
+        "avg_billing_ratio": 0.6015297212960573,
+        "avg_load_factor": 0.12698715052853463,
+        "disruption_rate": 0.35952993022401764,
+        "cluster": 0
+      },
+      {
+        "Circle": "KAMAREDDY",
+        "avg_units": 25945.922338474815,
+        "total_units": 240544646.0,
+        "avg_connections": 460.08359400280443,
+        "avg_billing_ratio": 0.5730403535317401,
+        "avg_load_factor": 0.1445674729899201,
+        "disruption_rate": 0.3645777154568008,
+        "cluster": 0
+      },
+      {
+        "Circle": "KARIMNAGAR",
+        "avg_units": 70546.17001533101,
+        "total_units": 506168769.86,
+        "avg_connections": 843.8072473867596,
+        "avg_billing_ratio": 0.6233742493899112,
+        "avg_load_factor": 0.12078229166820374,
+        "disruption_rate": 0.33644599303135886,
+        "cluster": 1
+      },
+      {
+        "Circle": "KHAMMAM",
+        "avg_units": 44935.45148933174,
+        "total_units": 638128346.6,
+        "avg_connections": 543.0878811351313,
+        "avg_billing_ratio": 0.5887525063985382,
+        "avg_load_factor": 0.15608233810492325,
+        "disruption_rate": 0.35349623265967184,
+        "cluster": 1
+      },
+      {
+        "Circle": "MAHABUBABAD",
+        "avg_units": 14822.704242182832,
+        "total_units": 148849596.0,
+        "avg_connections": 345.96703843855806,
+        "avg_billing_ratio": 0.5647866152918651,
+        "avg_load_factor": 0.1139670372990813,
+        "disruption_rate": 0.44293965345548697,
+        "cluster": 0
+      },
+      {
+        "Circle": "MANCHERIAL",
+        "avg_units": 37603.778755727035,
+        "total_units": 311885741.0,
+        "avg_connections": 485.2046057390885,
+        "avg_billing_ratio": 0.6477598032645319,
+        "avg_load_factor": 0.15442129981395755,
+        "disruption_rate": 0.2976850735471425,
+        "cluster": 0
+      },
+      {
+        "Circle": "NIRMAL",
+        "avg_units": 26658.629964747357,
+        "total_units": 226864941.0,
+        "avg_connections": 418.33113983548765,
+        "avg_billing_ratio": 0.5790263433758092,
+        "avg_load_factor": 0.17408651715342338,
+        "disruption_rate": 0.3739130434782609,
+        "cluster": 3
+      },
+      {
+        "Circle": "NIZAMABAD",
+        "avg_units": 62056.87268570326,
+        "total_units": 643281542.26,
+        "avg_connections": 807.661682423307,
+        "avg_billing_ratio": 0.6412981643410504,
+        "avg_load_factor": 0.15085636955833956,
+        "disruption_rate": 0.3013698630136986,
+        "cluster": 1
+      },
+      {
+        "Circle": "PEDDAPALLY",
+        "avg_units": 46791.05533266466,
+        "total_units": 279904093.0,
+        "avg_connections": 653.6835506519559,
+        "avg_billing_ratio": 0.61905684774537,
+        "avg_load_factor": 0.14641167106282693,
+        "disruption_rate": 0.3348378468739552,
+        "cluster": 0
+      },
+      {
+        "Circle": "WARANGAL",
+        "avg_units": 46554.79114881439,
+        "total_units": 341619057.45,
+        "avg_connections": 649.2935404742436,
+        "avg_billing_ratio": 0.614862875003924,
+        "avg_load_factor": 0.09858732199800718,
+        "disruption_rate": 0.3905696375034069,
+        "cluster": 0
+      }
+    ]
+  },
+  "random_forest": {
+    "roc_auc": 1.0
+  }
+}

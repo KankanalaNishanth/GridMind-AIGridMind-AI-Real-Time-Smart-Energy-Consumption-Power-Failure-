@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "1. Train Pipeline",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train_pipeline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "2. Run API (uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "3. Evaluate Models",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/evaluate_pipeline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "4. Generate Reports (Dashboard PNG)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/generate_reports.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

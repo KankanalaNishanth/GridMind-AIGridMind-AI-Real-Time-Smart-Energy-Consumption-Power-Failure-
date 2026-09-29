@@ -1,0 +1,22 @@
+# Environments
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Data & model artifacts (large / generated — don't commit)
+data/*.csv
+models/*.pkl
+reports/*.png
+
+# Logs
+logs/*.log
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
