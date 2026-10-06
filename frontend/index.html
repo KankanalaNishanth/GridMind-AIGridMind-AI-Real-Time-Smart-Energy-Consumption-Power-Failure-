@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridMind AI — Real-Time Smart Energy & Power Failure Prediction</title>
+  <meta name="description" content="AI-driven real-time power failure and smart energy consumption monitoring system for TGSPDCL/TGNPDCL">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="dark">
+  <div class="grid-bg-overlay"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-title">
+          <h1>GridMind AI <span>Platform</span></h1>
+          <p>Real-Time Smart Energy Consumption & Power Failure Intelligence (TGSPDCL / TGNPDCL)</p>
+        </div>
+      </div>
+
+      <div class="header-status-group">
+        <div class="status-badge" id="apiStatusBadge">
+          <div class="status-indicator" id="apiHealthIndicator"></div>
+          <span id="apiHealthText">Checking API...</span>
+        </div>
+        <div class="status-badge">
+          <span style="color: var(--accent-cyan);">🕒</span>
+          <span id="liveClock">Loading...</span>
+        </div>
+        <button class="header-btn" id="themeToggleBtn">🌙 Dark</button>
+        <a href="/docs" target="_blank" class="header-btn" title="Open FastAPI Interactive Docs">
+          <span> API Docs</span>
+        </a>
+
+        <!-- User RBAC Profile Badge & Auth Actions -->
+        <div class="status-badge user-profile-badge" id="headerUserBadge" style="display: none;">
+          <span id="headerUserIcon"></span>
+          <span id="headerUserName" style="font-weight: 600;">Admin</span>
+          <span class="user-badge-role admin" id="headerUserRole">Super Admin</span>
+        </div>
+        <button class="header-btn danger-btn" id="logoutBtn" style="display: none;" title="Sign out of GridMind">🚪 Sign Out</button>
+        <button class="header-btn" id="loginTriggerBtn"> Sign In</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-nav-bar">
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="tab-overview"> Executive Overview</button>
+      <button class="tab-btn" data-tab="tab-disruption"> Disruption & Failure Predictor</button>
+      <button class="tab-btn" data-tab="tab-anomaly">🔍 Smart Meter Anomaly Detector</button>
+      <button class="tab-btn" data-tab="tab-forecasting">Energy Demand Forecasting</button>
+      <button class="tab-btn" data-tab="tab-clustering"> Grid Circles & Clusters</button>
+      <button class="tab-btn" data-tab="tab-streaming"> Live Telemetry Stream (Kafka)</button>
+      <button class="tab-btn" data-tab="tab-models"> Model Analytics & Report</button>
+      <button class="tab-btn" data-tab="tab-security" id="tabSecurityBtn">🛡️ Security & Access Control</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Tab 1: Executive Overview -->
+    <section class="tab-panel active" id="tab-overview">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Historical Telemetry</span>
+            <span class="kpi-icon">🗄️</span>
+          </div>
+          <div class="kpi-value" id="kpiTotalRecords">156,294</div>
+          <div class="kpi-subtext">Processed monthly grid records across 17 files</div>
+        </div>
+
+        <div class="kpi-card emerald">
+          <div class="kpi-header">
+            <span>Operational Circles</span>
+            <span class="kpi-icon">⚡</span>
+          </div>
+          <div class="kpi-value" id="kpiCirclesCount">16 Circles</div>
+          <div class="kpi-subtext">TGSPDCL & TGNPDCL state distribution circles</div>
+        </div>
+
+        <div class="kpi-card purple">
+          <div class="kpi-header">
+            <span>Disruption AI Accuracy</span>
+            <span class="kpi-icon">🎯</span>
+          </div>
+          <div class="kpi-value" id="kpiRocAuc">1.0000</div>
+          <div class="kpi-subtext">Random Forest ROC-AUC on disruption classification</div>
+        </div>
+
+        <div class="kpi-card amber">
+          <div class="kpi-header">
+            <span>Meter Anomalies Flagged</span>
+            <span class="kpi-icon">⚠️</span>
+          </div>
+          <div class="kpi-value" id="kpiAnomalyCount">7,815</div>
+          <div class="kpi-subtext">5.0% smart meter contamination / power theft rate</div>
+        </div>
+
+        <div class="kpi-card rose">
+          <div class="kpi-header">
+            <span>SARIMA Forecast MAPE</span>
+            <span class="kpi-icon">📉</span>
+          </div>
+          <div class="kpi-value">23.34%</div>
+          <div class="kpi-subtext">Seasonal auto-regressive multi-step forecast</div>
+        </div>
+      </div>
+
+      <!-- Quick Action Jump Cards -->
+      <div class="section-grid-3">
+        <div class="card">
+          <div class="card-title">
+            <span>⚡ Power Failure Predictor</span>
+            <span style="color: var(--accent-cyan); font-size: 1.25rem;">&rarr;</span>
+          </div>
+          <p class="card-subtitle">Predict real-time grid disruption risk and feeder overload probabilities using trained Random Forest.</p>
+          <button class="btn-primary" onclick="document.querySelector('[data-tab=tab-disruption]').click()">Test Disruption Model</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>🔍 Meter Tamper Detection</span>
+            <span style="color: var(--accent-emerald); font-size: 1.25rem;">&rarr;</span>
+          </div>
+          <p class="card-subtitle">Identify non-technical losses, bypasses, meter faults, and underbilling using Isolation Forest.</p>
+          <button class="btn-primary" onclick="document.querySelector('[data-tab=tab-anomaly]').click()">Scan Smart Meter</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>📡 Live Kafka Stream Simulator</span>
+            <span style="color: var(--accent-amber); font-size: 1.25rem;">&rarr;</span>
+          </div>
+          <p class="card-subtitle">Simulate high-throughput IoT telemetry streaming through the producer & consumer pipeline.</p>
+          <button class="btn-primary" onclick="document.querySelector('[data-tab=tab-streaming]').click()">Launch Stream Replay</button>
+        </div>
+      </div>
+
+      <!-- System Architecture & Models Summary -->
+      <div class="card">
+        <div class="card-title">
+          <span>🧠 GridMind AI Machine Learning Architecture</span>
+          <span class="status-badge" style="color: var(--accent-emerald);">Verified Notebook Port</span>
+        </div>
+        <div class="card-subtitle">Complete end-to-end integration: data ingestion, feature engineering, models, streaming, and REST API.</div>
+        
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Machine Learning Model</th>
+                <th>Target & Purpose</th>
+                <th>Engineered Input Features</th>
+                <th>Benchmark Metric</th>
+                <th>Active Artifact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Random Forest Classifier</strong></td>
+                <td>Power Failure & Feeder Disruption Prediction</td>
+                <td><code>TotServices</code>, <code>avg_units_per_conn</code>, <code>load_factor</code>, <code>month_num</code>, <code>Load</code>, <code>billing_ratio</code></td>
+                <td><strong style="color: var(--accent-emerald);">ROC-AUC 1.0000</strong></td>
+                <td><code>models/rf_disruption.pkl</code></td>
+              </tr>
+              <tr>
+                <td><strong>Isolation Forest</strong></td>
+                <td>Smart Meter Anomaly & Theft Detection</td>
+                <td><code>Units</code>, <code>Load</code>, <code>billing_ratio</code>, <code>avg_units_per_conn</code>, <code>load_factor</code> (StandardScaled)</td>
+                <td><strong style="color: var(--accent-amber);">5.0% Contamination (7,815 Flagged)</strong></td>
+                <td><code>models/iso_forest.pkl</code></td>
+              </tr>
+              <tr>
+                <td><strong>SARIMA (1,1,1)(1,1,1,12)</strong></td>
+                <td>State-Wide Multi-Month Energy Consumption Forecasting</td>
+                <td>Monthly aggregate units time series (17-month historical train baseline)</td>
+                <td><strong style="color: var(--accent-cyan);">MAPE 23.34%</strong></td>
+                <td><code>models/sarima_model.pkl</code></td>
+              </tr>
+              <tr>
+                <td><strong>K-Means Clustering</strong></td>
+                <td>Circle Segmentation & Vulnerability Grouping (k=4)</td>
+                <td><code>avg_units</code>, <code>total_units</code>, <code>avg_connections</code>, <code>avg_billing_ratio</code>, <code>avg_load_factor</code>, <code>disruption_rate</code></td>
+                <td><strong style="color: var(--accent-purple);">Silhouette Score 0.2610</strong></td>
+                <td><code>models/kmeans.pkl</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Disruption & Power Failure Predictor -->
+    <section class="tab-panel" id="tab-disruption">
+      <div class="section-grid-2">
+        
+        <!-- Input Form -->
+        <div class="card">
+          <div class="card-title">
+            <span>⚡ Grid Disruption Telemetry Input</span>
+            <span class="status-badge">Model: Random Forest</span>
+          </div>
+          <div class="card-subtitle">Supply feeder telemetry to evaluate power failure probability.</div>
+
+          <!-- Quick Test Presets -->
+          <div class="presets-group">
+            <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center;">Presets:</span>
+            <button class="preset-chip" onclick="loadDisruptionPreset('highRisk')">🚨 High Disruption Risk Feeder</button>
+            <button class="preset-chip" onclick="loadDisruptionPreset('normalResidential')">🏡 Normal Residential Grid</button>
+            <button class="preset-chip" onclick="loadDisruptionPreset('industrialHeavy')">🏭 Heavy Industrial Feeder</button>
+            <button class="preset-chip" onclick="loadDisruptionPreset('subsidizedAgri')">🌾 Agricultural Feeder</button>
+          </div>
+
+          <form id="disruptionForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Operational Circle</label>
+                <select class="form-select" id="predCircle"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Month Index</label>
+                <input type="number" class="form-control" id="predMonth" min="1" max="24" value="12" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Total Services (Connections)</label>
+                <input type="number" class="form-control" id="predTotServices" min="1" value="650" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Billed Services (Active Billed)</label>
+                <input type="number" class="form-control" id="predBilledServices" min="0" value="610" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Connected Load (kW)</label>
+                <input type="number" step="0.1" class="form-control" id="predLoad" min="0.1" value="340.5" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Energy Units Consumed (kWh)</label>
+                <input type="number" step="0.1" class="form-control" id="predUnits" min="0" value="48200" required>
+              </div>
+            </div>
+
+            <!-- Dynamic Feature Engineering Preview -->
+            <div class="feature-preview-grid">
+              <div class="feature-pill">
+                <div class="f-name">Billing Ratio</div>
+                <div class="f-val" id="featBillingRatio">0.938</div>
+              </div>
+              <div class="feature-pill">
+                <div class="f-name">Avg Units/Conn</div>
+                <div class="f-val" id="featAvgUnits">79.0</div>
+              </div>
+              <div class="feature-pill">
+                <div class="f-name">Load Factor</div>
+                <div class="f-val" id="featLoadFactor">0.197</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <button type="submit" class="btn-primary" id="btnSubmitDisruption">
+                ⚡ Predict Power Disruption Risk
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Result Card -->
+        <div class="card">
+          <div class="card-title">
+            <span>📊 Disruption Risk Assessment</span>
+            <span class="status-badge" style="color: var(--accent-cyan);">Inference Engine</span>
+          </div>
+          <div class="card-subtitle">Real-time prediction outcome and automatic control room recommendations.</div>
+
+          <div class="result-display-box">
+            <div class="gauge-circle" id="disruptionGauge" style="border: 4px solid var(--accent-emerald); background: radial-gradient(circle, #064e3b 0%, #0f172a 100%);">
+              <div class="gauge-value" id="disruptionRiskPercent" style="color: var(--accent-emerald);">0%</div>
+              <div class="gauge-label">Disruption Probability</div>
+            </div>
+
+            <div class="alert-banner success" id="disruptionAlertBanner">
+              ✅ NORMAL GRID CONDITIONS — Feeder Operational Parameters Stable
+            </div>
+
+            <div class="recommendation-box" id="disruptionRecommendation">
+              <strong>Dispatch Recommendation:</strong> Feeder operational parameters are within safe distribution standards. Continuous telemetry monitoring active.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Tab 3: Smart Meter Anomaly Detector -->
+    <section class="tab-panel" id="tab-anomaly">
+      <div class="section-grid-2">
+        
+        <!-- Form -->
+        <div class="card">
+          <div class="card-title">
+            <span>🔍 Smart Meter Telemetry Scanner</span>
+            <span class="status-badge">Model: Isolation Forest</span>
+          </div>
+          <div class="card-subtitle">Examine meter consumption signatures to flag energy theft, meter bypass, or hardware malfunction.</div>
+
+          <div class="presets-group">
+            <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center;">Presets:</span>
+            <button class="preset-chip" onclick="loadAnomalyPreset('theftZero')">🚨 Power Theft / Zero Bill Anomaly</button>
+            <button class="preset-chip" onclick="loadAnomalyPreset('surgeAnomaly')">📈 Abnormal Surge Anomaly</button>
+            <button class="preset-chip" onclick="loadAnomalyPreset('normalMeter')">🏡 Verified Normal Meter</button>
+          </div>
+
+          <form id="anomalyForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Circle Location</label>
+                <select class="form-select" id="anomCircle"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Month Index</label>
+                <input type="number" class="form-control" id="anomMonth" min="1" max="24" value="12" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Total Services</label>
+                <input type="number" class="form-control" id="anomTotServices" min="1" value="500" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Billed Services</label>
+                <input type="number" class="form-control" id="anomBilledServices" min="0" value="0" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Connected Load (kW)</label>
+                <input type="number" step="0.1" class="form-control" id="anomLoad" min="0.1" value="600" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Energy Units (kWh)</label>
+                <input type="number" step="0.1" class="form-control" id="anomUnits" min="0" value="0" required>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <button type="submit" class="btn-primary" id="btnSubmitAnomaly">
+                🔍 Run Isolation Forest Anomaly Scan
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Result -->
+        <div class="card">
+          <div class="card-title">
+            <span>🛡️ Meter Audit & Tamper Verdict</span>
+            <span class="status-badge" style="color: var(--accent-amber);">Contamination: 5%</span>
+          </div>
+          <div class="card-subtitle">Multidimensional Isolation Forest anomaly score calculation.</div>
+
+          <div class="result-display-box">
+            <div class="gauge-circle" style="border: 4px solid var(--accent-amber); background: radial-gradient(circle, #3b2a14 0%, #0f172a 100%);">
+              <div class="gauge-value" id="anomScoreValue" style="color: var(--accent-amber);">-0.4049</div>
+              <div class="gauge-label">Anomaly Score (&lt; -0.1 is Anomaly)</div>
+            </div>
+
+            <div class="alert-banner danger" id="anomAlertBanner">
+              🚨 SMART METER ANOMALY DETECTED — Possible Theft or Defective Meter
+            </div>
+
+            <div class="recommendation-box" id="anomExplanation">
+              <strong>Isolation Forest Analysis:</strong> Score is below the anomaly alert threshold (-0.1). High connected load with zero units billed is strongly indicative of meter tampering or revenue leakage.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Tab 4: Energy Demand Forecasting -->
+    <section class="tab-panel" id="tab-forecasting">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-title">
+          <span>📈 Multi-Step Grid Energy Demand Forecast (SARIMA)</span>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <span style="font-size: 0.85rem; color: var(--text-secondary);">Forecast Steps:</span>
+            <input type="range" id="forecastStepsSlider" min="3" max="18" value="6" style="cursor: pointer;">
+            <span id="forecastStepsValue" style="font-weight: 700; color: var(--accent-cyan); width: 80px;">6 Months</span>
+            <button class="btn-primary" id="btnRunForecast" style="width: auto; padding: 0.45rem 1rem;">📈 Generate Forecast</button>
+          </div>
+        </div>
+        <div class="card-subtitle">Projects future grid consumption using SARIMA (1,1,1)(1,1,1,12) trained on 17 months of historical telemetry.</div>
+
+        <div class="chart-box">
+          <canvas id="forecastChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📋 Projected Energy Consumption by Month</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timeline</th>
+                <th>Million Units (MU)</th>
+                <th>Megawatt Hours (MWh)</th>
+                <th>Kilowatt Hours (kWh)</th>
+                <th>Confidence Status</th>
+              </tr>
+            </thead>
+            <tbody id="forecastTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Grid Circles & Clusters -->
+    <section class="tab-panel" id="tab-clustering">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-title">
+          <span>🌐 Circle Clustering & Vulnerability Analysis (K-Means)</span>
+          <span class="status-badge">k=4 Clusters | Silhouette: 0.2610</span>
+        </div>
+        <div class="card-subtitle">Multidimensional grouping of 16 TGSPDCL/TGNPDCL circles based on load factor, billing ratio, and disruption rate.</div>
+
+        <div class="chart-box">
+          <canvas id="clustersChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>🗺️ Circle Segmentation Directory</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Circle Name</th>
+                <th>Cluster Profile</th>
+                <th>Avg Monthly Units</th>
+                <th>Total Units (MU)</th>
+                <th>Avg Connections</th>
+                <th>Avg Billing Ratio</th>
+                <th>Avg Load Factor</th>
+                <th>Historical Disruption Rate</th>
+              </tr>
+            </thead>
+            <tbody id="clustersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 6: Live Telemetry Stream (Kafka Pipeline) -->
+    <section class="tab-panel" id="tab-streaming">
+      <div class="section-grid-2">
+        
+        <!-- Controls & Metrics -->
+        <div class="card">
+          <div class="card-title">
+            <span>📡 Kafka Pipeline Stream Simulation</span>
+            <span class="status-badge" style="color: var(--accent-emerald);">Phase 9 Replay</span>
+          </div>
+          <div class="card-subtitle">Simulates Kafka IoT smart meter ingestion: producer streams live packets, consumer runs real-time ML scoring.</div>
+
+          <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1.5rem;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+              <label class="form-label">Number of Telemetry Messages</label>
+              <input type="number" class="form-control" id="streamCountInput" min="5" max="100" value="25">
+            </div>
+            <button class="btn-primary" id="btnStartSimulation" style="flex: 1.5;">
+              🚀 Run Live Stream Simulation
+            </button>
+          </div>
+
+          <div class="kpi-grid" style="margin-bottom: 0;">
+            <div class="kpi-card" style="padding: 1rem;">
+              <div class="kpi-header"><span>Messages Streamed</span></div>
+              <div class="kpi-value" id="streamProcessedCount" style="font-size: 1.5rem;">0</div>
+            </div>
+            <div class="kpi-card rose" style="padding: 1rem;">
+              <div class="kpi-header"><span>Alerts Triggered</span></div>
+              <div class="kpi-value" id="streamAlertCount" style="font-size: 1.5rem; color: #ef4444;">0</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.25rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+            <strong>Pipeline Flow:</strong><br>
+            <code>Producer</code> publishes random circle meter packets &rarr; <code>energy_telemetry</code> Kafka Topic &rarr; <code>Consumer</code> scores with Random Forest + Isolation Forest &rarr; <code>predictions</code> Topic + alerts.
+          </div>
+        </div>
+
+        <!-- Terminal Stream Monitor -->
+        <div class="card" style="padding: 1rem;">
+          <div class="terminal-window">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+              </div>
+              <div class="terminal-title">gridmind_telemetry_stream: /api/v1/stream/simulate</div>
+              <div style="color: #64748b; font-size: 0.7rem;">TOPIC: energy_telemetry</div>
+            </div>
+            <div class="terminal-body" id="streamTerminalBody">
+              <div style="color: #64748b; text-align: center; margin-top: 120px;">
+                Ready to stream. Click "Run Live Stream Simulation" to begin IoT telemetry replay.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Tab 7: Model Analytics & Evaluation Report -->
+    <section class="tab-panel" id="tab-models">
+      <div class="kpi-grid">
+        <div class="kpi-card purple">
+          <div class="kpi-header"><span>Random Forest ROC-AUC</span></div>
+          <div class="kpi-value" id="evalRfAuc">1.0000</div>
+          <div class="kpi-subtext">Precision 1.0000 | Recall 1.0000</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-header"><span>Isolation Forest Anomalies</span></div>
+          <div class="kpi-value" id="evalIsoCount">7,815 (5.0%)</div>
+          <div class="kpi-subtext">Threshold: -0.1</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header"><span>SARIMA Forecast MAPE</span></div>
+          <div class="kpi-value" id="evalSarimaMape">23.34%</div>
+          <div class="kpi-subtext">Auto-regressive seasonal</div>
+        </div>
+        <div class="kpi-card emerald">
+          <div class="kpi-header"><span>K-Means Silhouette</span></div>
+          <div class="kpi-value">0.2610</div>
+          <div class="kpi-subtext">4 Circle Segments</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📊 Full Analytics Dashboard Report (Phase 11)</span>
+          <a href="/api/v1/dashboard/image" target="_blank" class="header-btn" style="width: auto;">🔍 Open Raw High-Res Image</a>
+        </div>
+        <div class="card-subtitle">Generated 4-panel Matplotlib report comparing Consumption Trends, Disruption Probability, Anomaly Distribution, and Circle Clusters.</div>
+        
+        <div style="text-align: center; margin-top: 1rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); background: #000;">
+          <img src="/api/v1/dashboard/image" alt="GridMind AI Analytics Dashboard" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22>Dashboard image will appear here after generate_reports.py</text></svg>'">
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 8: Security & Role-Based Access Control (RBAC) -->
+    <section class="tab-panel" id="tab-security">
+      
+      <!-- Security Status KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Primary Administrator</span>
+            <span class="kpi-icon">⚡</span>
+          </div>
+          <div class="kpi-value" style="color: var(--accent-cyan);">You (Super Admin)</div>
+          <div class="kpi-subtext">Full root privilege & ML system control</div>
+        </div>
+
+        <div class="kpi-card emerald">
+          <div class="kpi-header">
+            <span>Security Admins Configured</span>
+            <span class="kpi-icon">🛡️</span>
+          </div>
+          <div class="kpi-value">2 Security Officers</div>
+          <div class="kpi-subtext">SOC Lead & Grid Safety Administrator</div>
+        </div>
+
+        <div class="kpi-card purple">
+          <div class="kpi-header">
+            <span>Session Token Integrity</span>
+            <span class="kpi-icon">🔐</span>
+          </div>
+          <div class="kpi-value">HMAC-SHA256</div>
+          <div class="kpi-subtext">Digitally signed tamper-proof Bearer tokens</div>
+        </div>
+
+        <div class="kpi-card amber">
+          <div class="kpi-header">
+            <span>Password Cryptography</span>
+            <span class="kpi-icon">🔑</span>
+          </div>
+          <div class="kpi-value">PBKDF2-SHA256</div>
+          <div class="kpi-subtext">100,000 rounds + unique 16-byte cryptographic salt</div>
+        </div>
+      </div>
+
+      <!-- Administrator Roster Grid -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-title">
+          <span>👥 Authorized Security Personnel & Role Roster</span>
+          <span style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-cyan);">RBAC ENGINE: ACTIVE</span>
+        </div>
+        <div class="card-subtitle">Role-Based Access Hierarchy configured for GridMind AI energy infrastructure.</div>
+
+        <div class="security-roster-grid" style="margin-top: 1.25rem;" id="securityRosterGrid">
+          
+          <!-- Admin (You) -->
+          <div class="security-user-card" id="card-user-admin">
+            <div class="security-user-header">
+              <div class="security-user-avatar" style="border-color: rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.1);">⚡</div>
+              <span class="user-badge-role admin">Super Admin</span>
+            </div>
+            <div class="security-user-title">Chief Energy Administrator (You)</div>
+            <div class="security-user-meta">User: admin | Root System Owner</div>
+            <div class="security-user-desc">
+              Unrestricted executive authority over all ML models, Kafka streams, simulation cycles, and system RBAC policies.
+            </div>
+            <div class="security-perm-tag-list">
+              <span class="perm-tag highlight">ALL PRIVILEGES</span>
+              <span class="perm-tag">Model Registry</span>
+              <span class="perm-tag">Kafka Stream</span>
+              <span class="perm-tag">User Access</span>
+              <span class="perm-tag">Audit Control</span>
+            </div>
+          </div>
+
+          <!-- Security Admin 1 -->
+          <div class="security-user-card" id="card-user-sec_admin1">
+            <div class="security-user-header">
+              <div class="security-user-avatar" style="border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);">🛡️</div>
+              <span class="user-badge-role security_admin">Security Admin 1</span>
+            </div>
+            <div class="security-user-title">Security Admin 1 (SOC Lead)</div>
+            <div class="security-user-meta">User: sec_admin1 | SOC Lead</div>
+            <div class="security-user-desc">
+              Cyber-Physical Grid Security lead specializing in smart-meter anomaly investigations, intrusion detection, and real-time telemetry stream auditing.
+            </div>
+            <div class="security-perm-tag-list">
+              <span class="perm-tag highlight">Security Console</span>
+              <span class="perm-tag">Anomaly Audit</span>
+              <span class="perm-tag">Stream Audit</span>
+              <span class="perm-tag">Security Logs</span>
+            </div>
+          </div>
+
+          <!-- Security Admin 2 -->
+          <div class="security-user-card" id="card-user-sec_admin2">
+            <div class="security-user-header">
+              <div class="security-user-avatar" style="border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);">🛡️</div>
+              <span class="user-badge-role security_admin">Security Admin 2</span>
+            </div>
+            <div class="security-user-title">Security Admin 2 (Safety & Compliance)</div>
+            <div class="security-user-meta">User: sec_admin2 | Grid Safety</div>
+            <div class="security-user-desc">
+              Infrastructure Resilience officer focused on circle disruption probabilities, emergency failovers, and state regulatory compliance.
+            </div>
+            <div class="security-perm-tag-list">
+              <span class="perm-tag highlight">Disruption Safety</span>
+              <span class="perm-tag">Threshold Review</span>
+              <span class="perm-tag">Compliance Logs</span>
+              <span class="perm-tag">Audit Trail</span>
+            </div>
+          </div>
+
+          <!-- Operator -->
+          <div class="security-user-card" id="card-user-operator">
+            <div class="security-user-header">
+              <div class="security-user-avatar" style="border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.1);">📊</div>
+              <span class="user-badge-role operator">Grid Operator</span>
+            </div>
+            <div class="security-user-title">Grid Operations Analyst</div>
+            <div class="security-user-meta">User: operator | Operations</div>
+            <div class="security-user-desc">
+              Daily grid monitoring technician with read access to telemetry and predictive scoring models, restricted from admin configuration.
+            </div>
+            <div class="security-perm-tag-list">
+              <span class="perm-tag">Read Telemetry</span>
+              <span class="perm-tag">View Forecasts</span>
+              <span class="perm-tag">Predict Disruption</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Live Security & Audit Trail -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-title">
+          <span>📜 Real-Time Security & Access Audit Trail</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="header-btn" id="simulateSecurityCheckBtn" title="Test Audit Logger">🧪 Record Test Audit Event</button>
+            <button class="header-btn" id="refreshAuditLogsBtn" title="Refresh Live Audit Trail">🔄 Refresh Logs</button>
+          </div>
+        </div>
+        <div class="card-subtitle">Immutable chronological ledger of authentication attempts, role checks, and critical grid stream invocations.</div>
+
+        <div class="audit-table-wrapper">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Timestamp (UTC)</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Event Type</th>
+                <th>Status</th>
+                <th>IP Address</th>
+                <th>Event Details</th>
+              </tr>
+            </thead>
+            <tbody id="auditLogsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                  Loading security audit events...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Role-Based Access Control Permission Matrix -->
+      <div class="card">
+        <div class="card-title">
+          <span>⚖️ Role-Based Access Control (RBAC) Permission Matrix</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">TGSPDCL / TGNPDCL Grid Security Policy</span>
+        </div>
+        <div class="card-subtitle">Granular capability breakdown comparing privileges granted to Super Admin, Security Admins, and Operators.</div>
+
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>System Module / Feature</th>
+              <th>⚡ Super Admin (You)</th>
+              <th>🛡️ Security Admin 1 (SOC)</th>
+              <th>🛡️ Security Admin 2 (Safety)</th>
+              <th>📊 Grid Operator</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Executive Overview Dashboard</td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge read">Read Access</span></td>
+            </tr>
+            <tr>
+              <td>Disruption & Failure Predictor</td>
+              <td><span class="matrix-badge full">Full + Thresholds</span></td>
+              <td><span class="matrix-badge sec">Threat Monitoring</span></td>
+              <td><span class="matrix-badge sec">Safety Audit</span></td>
+              <td><span class="matrix-badge read">Predict Only</span></td>
+            </tr>
+            <tr>
+              <td>Smart Meter Anomaly Detector</td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge sec">Intrusion Audit</span></td>
+              <td><span class="matrix-badge sec">Anomaly Audit</span></td>
+              <td><span class="matrix-badge read">Query Only</span></td>
+            </tr>
+            <tr>
+              <td>Energy Demand Forecasting (SARIMA)</td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge read">Read Access</span></td>
+              <td><span class="matrix-badge read">Read Access</span></td>
+              <td><span class="matrix-badge read">Read Access</span></td>
+            </tr>
+            <tr>
+              <td>Grid Circles & K-Means Clusters</td>
+              <td><span class="matrix-badge full">Full Access</span></td>
+              <td><span class="matrix-badge read">Audit Access</span></td>
+              <td><span class="matrix-badge sec">Safety Review</span></td>
+              <td><span class="matrix-badge read">Read Access</span></td>
+            </tr>
+            <tr>
+              <td>Live Telemetry Stream Simulation (Kafka)</td>
+              <td><span class="matrix-badge full">Execute & Configure</span></td>
+              <td><span class="matrix-badge sec">Execute & Audit</span></td>
+              <td><span class="matrix-badge sec">Execute & Audit</span></td>
+              <td><span class="matrix-badge none">🔒 Restricted</span></td>
+            </tr>
+            <tr>
+              <td>Security & Access Control Center</td>
+              <td><span class="matrix-badge full">Full Root Control</span></td>
+              <td><span class="matrix-badge sec">Audit & Monitor</span></td>
+              <td><span class="matrix-badge sec">Audit & Monitor</span></td>
+              <td><span class="matrix-badge none">🔒 Restricted</span></td>
+            </tr>
+            <tr>
+              <td>User & Role Credential Management</td>
+              <td><span class="matrix-badge full">Super Admin Only</span></td>
+              <td><span class="matrix-badge sec">Session Audit</span></td>
+              <td><span class="matrix-badge sec">Session Audit</span></td>
+              <td><span class="matrix-badge none">🔒 Restricted</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       Authentication Gateway Modal
+       ========================================================================== -->
+  <div class="auth-modal-overlay" id="authModalOverlay">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-badge-icon">⚡</div>
+        <h2>GridMind AI — Security Access Gateway</h2>
+        <p>State Grid Intelligence & Failure Prevention System (TGSPDCL / TGNPDCL)</p>
+      </div>
+
+      <!-- Quick Role Selection Pills -->
+      <span class="role-pills-label">⚡ Fast Role Selection (Click to Authenticate):</span>
+      <div class="role-pills-group">
+        <button type="button" class="role-pill-btn active" data-role="admin" data-user="admin" data-pass="admin123">
+          <div class="role-pill-title">⚡ Admin (You)</div>
+          <div class="role-pill-sub">Full Super Admin Root</div>
+        </button>
+
+        <button type="button" class="role-pill-btn" data-role="security_admin" data-user="sec_admin1" data-pass="secadmin1">
+          <div class="role-pill-title">🛡️ Security Admin 1</div>
+          <div class="role-pill-sub">SOC & Intrusion Lead</div>
+        </button>
+
+        <button type="button" class="role-pill-btn" data-role="security_admin" data-user="sec_admin2" data-pass="secadmin2">
+          <div class="role-pill-title">🛡️ Security Admin 2</div>
+          <div class="role-pill-sub">Grid Safety & Compliance</div>
+        </button>
+
+        <button type="button" class="role-pill-btn" data-role="operator" data-user="operator" data-pass="operator123">
+          <div class="role-pill-title">📊 Grid Operator</div>
+          <div class="role-pill-sub">Telemetry & Operations</div>
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form id="authLoginForm">
+        <div class="auth-form-group">
+          <label for="authUsernameInput">Username / Security ID</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">👤</span>
+            <input type="text" id="authUsernameInput" class="auth-input" value="de001" placeholder="Enter username..." required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="auth-form-group">
+          <label for="authPasswordInput">Access Password</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">🔑</span>
+            <input type="password" id="authPasswordInput" class="auth-input" value="GridDE@2026!" placeholder="Enter password..." required autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="auth-error-msg" id="authErrorMsg">
+          <span>⚠️</span> <span id="authErrorText">Invalid username or password.</span>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="authSubmitBtn">
+          <span>🔐</span> Sign In to Grid Mind Platform
+        </button>
+      </form>
+
+      <div class="auth-footer-notice">
+        <span>🔒 PBKDF2 + HMAC-SHA256 Encrypted</span>
+        <span>Strict RBAC Enforced</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>GridMind AI — Real-Time Smart Energy Consumption & Power Failure Prediction System</p>
+    <p style="margin-top: 0.25rem;">Built for TGSPDCL & TGNPDCL Grid Monitoring | Powered by FastAPI, Scikit-Learn, Statsmodels, & Kafka Pipeline</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

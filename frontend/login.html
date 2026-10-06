@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridMind AI — Login</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e2e8f0;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo .icon { font-size: 2.5rem; }
+    .logo h1 { font-size: 1.5rem; font-weight: 700; color: #38bdf8; margin-top: 0.5rem; }
+    .logo p { font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(71, 85, 105, 0.6);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      outline: none;
+      margin-bottom: 1.2rem;
+    }
+
+    input:focus { border-color: #38bdf8; }
+
+    button {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .alert-info  { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; }
+
+    .public-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .public-link a { color: #38bdf8; text-decoration: none; }
+    .public-link a:hover { text-decoration: underline; }
+
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="icon">⚡</div>
+      <h1>GridMind AI</h1>
+      <p>Smart Energy Consumption & Power Failure Prediction</p>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <form id="loginForm" autocomplete="off">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="ae001 / de001" required autocomplete="username" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+
+      <button type="submit" id="loginBtn">Sign In</button>
+    </form>
+
+    <div class="public-link">
+      <a href="/api/v1/public/energy-summary" target="_blank">View public energy summary ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/v1';
+
+    // If already logged in, redirect
+    const token = sessionStorage.getItem('gridmind_token');
+    if (token) {
+      window.location.href = '/dashboard.html';
+    }
+
+    const form = document.getElementById('loginForm');
+    const alertBox = document.getElementById('alert');
+    const loginBtn = document.getElementById('loginBtn');
+
+    function showAlert(msg, type = 'error') {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert alert-' + type;
+      alertBox.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.style.display = 'none';
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<span class="spinner"></span>Signing in…';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      // OAuth2 form-encoded body
+      const body = new URLSearchParams({ username, password });
+
+      try {
+        const resp = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString(),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          const detail = data.detail || 'Login failed. Please check your credentials.';
+          showAlert(detail);
+          return;
+        }
+
+        // Store tokens (sessionStorage — cleared when tab closes)
+        sessionStorage.setItem('gridmind_token', data.access_token);
+        sessionStorage.setItem('gridmind_refresh_token', data.refresh_token);
+        sessionStorage.setItem('gridmind_user', JSON.stringify(data.user));
+
+        // Redirect based on role
+        const role = data.user?.role;
+        if (role === 'DE') {
+          window.location.href = '/de_dashboard.html';
+        } else if (role === 'AE') {
+          window.location.href = '/dashboard.html';
+        } else {
+          window.location.href = '/dashboard.html';
+        }
+      } catch (err) {
+        showAlert('Network error. Please check your connection.');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

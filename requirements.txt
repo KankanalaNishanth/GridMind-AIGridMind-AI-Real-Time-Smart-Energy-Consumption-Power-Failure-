@@ -1,28 +1,28 @@
-# --- Core data & ML ---
-pandas>=2.0.0
-numpy>=1.24.0
-scikit-learn>=1.3.0
-scipy>=1.11.0
-statsmodels>=0.14.0
-prophet>=1.1.5
-joblib>=1.3.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
+# =============================================================================
+# GridMind AI — Master Requirements
+#
+# Modular requirement files are located in the requirements/ directory:
+#   - requirements/base.txt     : FastAPI backend, schemas & server
+#   - requirements/ml.txt       : Data processing & ML model libraries
+#   - requirements/prod.txt     : Production database (MongoDB) & streaming
+#   - requirements/dev.txt      : Testing (pytest, httpx) & linting
+#   - requirements/optional.txt : Optional neural nets & future model extensions
+# =============================================================================
 
-# --- Reserved for future model extensions (not used in current pipeline) ---
+-r requirements/base.txt
+-r requirements/ml.txt
+
+# --- Database & Streaming (Production) ---
+pymongo>=4.6.0
+kafka-python>=2.0.2
+
+# --- Reserved for future model extensions ---
 xgboost>=2.0.0
 tensorflow>=2.15.0
 PyYAML>=6.0.0
 
-# --- Backend API ---
-fastapi>=0.110.0
-uvicorn[standard]>=0.29.0
-pydantic>=2.6.0
-pydantic-settings>=2.2.0
-python-dotenv>=1.0.0
-
-# --- Database ---
-pymongo>=4.6.0
-
-# --- Streaming (optional, for real Kafka broker) ---
-kafka-python>=2.0.2
+# --- Authentication & Security (RBAC) ---
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+email-validator>=2.0.0

@@ -21,6 +21,7 @@
     "circle_clusters.csv",
     "iso_forest.pkl",
     "kmeans.pkl",
+    "prophet_model.pkl",
     "rf_disruption.pkl",
     "sarima_last_month.txt",
     "sarima_model.pkl",

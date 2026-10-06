@@ -1,66 +1,97 @@
-# GridMind AI — Backend & ML API
+# GridMind AI — Intelligent Smart Energy & Power Failure System
 
 Real-Time Smart Energy Consumption & Power Failure Prediction System for TGSPDCL/TGNPDCL.
-Production-structured rewrite of the original `GridMind_AI_EndToEnd.ipynb` notebook — same
-models, same feature engineering, same numbers, now organized as a runnable FastAPI service.
+Production-ready full-stack system featuring an interactive **Operations Web Dashboard (Frontend)**, a modular **FastAPI REST Backend**, and trained **Machine Learning Models**.
 
-## What changed vs. the notebook
+## 🚀 Quick Launch (Frontend + Backend)
 
-| Notebook | This project |
-|---|---|
-| Everything in one `.ipynb`, run cell by cell | Modular `app/` package, run as scripts/server |
-| `!pip install ...` cell | `requirements.txt` |
-| Hardcoded `file_*.csv` path in cwd | Configurable `data/` dir via `.env` |
-| Models trained + used in the same session | `train_pipeline.py` trains & saves once; API loads from disk |
-| FastAPI code generated as a string and written to `main.py` | Real `app/` package with routers, schemas, DB layer |
-| Kafka/Mongo mentioned inline | MongoDB wired through `app/services/db.py`; Kafka producer/consumer is a future extension point (not required to run the API) |
-| Plots shown inline | Not part of the API — re-run the original notebook in `notebooks/` if you want the EDA charts |
+Simply run the one-click batch launcher or Python:
 
-The feature engineering (`billing_ratio`, `avg_units_per_conn`, `load_factor`, `disruption`,
-`season`) and every model's hyperparameters are unchanged, so results match the notebook
-exactly (verified: 7,815 anomalies / 5.0%, RF ROC-AUC 1.0000, SARIMA MAPE 23.34%, KMeans
-silhouette 0.2610 on this dataset).
+```bash
+# Option 1: Double-click or run:
+start_dashboard.bat
 
-## Phase coverage (mapped from the original notebook)
+# Option 2: Run with Python:
+python run_server.py
+```
 
-| Notebook Phase | This project |
-|---|---|
-| 1–2 Setup, Load & Clean Data | `app/services/data_loader.py` |
-| 3 EDA | Original notebook (`notebooks/`) — not re-served by the API |
-| 4–7 Anomaly / Disruption / Forecast / Clustering models | `app/services/ml_pipeline.py` (run via `train_pipeline.py`) |
-| 8 Model Evaluation & Saving | `app/services/evaluation.py` (run via `evaluate_pipeline.py`) |
-| 9 Kafka Simulation (Producer/Consumer) | `app/services/kafka_stream.py` + `POST /api/v1/stream/simulate` |
-| 10 FastAPI Backend | `app/main.py` + `app/routers/*` (the whole `app/` package) |
-| 11 Final Summary Dashboard | `app/services/dashboard_report.py` (run via `generate_reports.py`), served at `GET /api/v1/dashboard/image` |
+- **Frontend Operations Dashboard**: [http://localhost:8000](http://localhost:8000)
+- **FastAPI Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Alternative ReDoc Docs**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-## Project structure
+---
+
+## 🖥️ What's New: Interactive Frontend Dashboard
+
+A responsive, state-of-the-art Operations Center web UI built with HTML5, CSS3 (Cyber-Grid Theme with Dark/Light mode), and Chart.js:
+1. **Executive Overview**: Real-time KPIs, historical telemetry volume (156k+ rows), 16 distribution circles, 5.0% anomaly rate, and system health status.
+2. **Disruption & Power Failure Predictor**: Interactive testing form with one-click presets (High Risk Overload, Normal Residential, Heavy Industrial, Subsidized Agricultural), live feature calculation, animated risk gauge, and AI dispatch recommendations.
+3. **Smart Meter Anomaly Detector**: Isolation Forest live scanning console for detecting power theft, meter bypasses, or hardware faults with score threshold visualizer.
+4. **Energy Demand Forecasting**: Multi-step SARIMA and Prophet projection chart with interactive horizon slider (3 to 18 months) and detailed monthly kWh/MWh breakdown table.
+5. **Grid Circles & Clusters**: Interactive K-Means (k=4) bubble chart and sortable table comparing all 16 TGSPDCL/TGNPDCL circles by load factor and disruption rate.
+6. **Kafka Telemetry Stream Simulator**: Real-time IoT smart meter stream processing simulation through the ML scoring pipeline with an animated packet terminal and live alert feed.
+7. **Model Analytics & Reports**: Live metrics table and embedded 4-panel high-resolution analytics dashboard report (`gridmind_dashboard.png`).
+
+---
+
+## 🛡️ Role-Based Access Control (RBAC) & Security Architecture
+
+When the application opens in your web browser, it is guarded by a **Security Access Gateway** enforcing cryptographic Role-Based Access Control (RBAC):
+
+### 👥 Configured Administrative Roles & Credentials
+
+| Role | Username | Default Password | Access Level & Scope |
+| :--- | :--- | :--- | :--- |
+| **⚡ Super Admin (You)** | `admin` | `admin123` | **Full Root Authority**: Unrestricted access to all grid prediction models, SARIMA forecasting, circle clusters, Kafka live stream simulation, security administration, user roster, and audit trails. |
+| **🛡️ Security Admin 1 (SOC Lead)** | `sec_admin1` | `secadmin1` | **Security Operations Lead**: Specialized in smart meter anomaly audits, threat & tamper monitoring, Kafka stream audit executions, and real-time security incident logs. |
+| **🛡️ Security Admin 2 (Grid Safety)** | `sec_admin2` | `secadmin2` | **Disaster & Safety Compliance Officer**: Focuses on disruption probabilities, failure alert thresholds, emergency failover oversight, and regulatory audit review. |
+| **📊 Grid Operator** | `operator` | `operator123` | **Operations Analyst**: Read-only access to operational dashboards and basic prediction queries; blocked from stream simulation and security logs. |
+
+*Alternate passwords accepted for testing:* `GridAdmin@2026!` (for admin), `SecAdmin1@2026!` (for sec_admin1), `SecAdmin2@2026!` (for sec_admin2).
+
+### 🔐 Security & Cryptography Specifications
+- **Password Protection**: Industry-standard **PBKDF2-HMAC-SHA256** with 100,000 hashing iterations and unique 16-byte cryptographically secure random salt.
+- **Session Tokens**: Tamper-proof **HMAC-SHA256 (HS256)** signed Bearer tokens with 24-hour expiration and constant-time signature verification.
+- **Audit Ledger**: Chronological immutable security audit trail logging every login attempt, logout, privilege check, and live Kafka simulation trigger.
+- **Browser Security Gateway**: Interactive login modal with one-click **Fast Role Selector** pills for rapid verification during demonstrations.
+
+---
+
+## Project Structure
 
 ```
-gridmind-ai/
-├── app/
-│   ├── main.py                 # FastAPI app entrypoint
+GridMind-AI/
+├── frontend/                   # Interactive Web UI (HTML5, CSS3, Chart.js)
+│   ├── index.html              # Operations Dashboard Single Page App
+│   ├── css/style.css           # Cyber-Grid responsive stylesheet & theme
+│   └── js/
+│       ├── app.js              # API client, live stream animation & form logic
+│       └── charts.js           # Chart.js visualization handlers
+├── app/                        # FastAPI Backend Package
+│   ├── main.py                 # FastAPI app entrypoint & static mounting
 │   ├── schemas.py              # Pydantic request/response models
-│   ├── core/
-│   │   ├── config.py           # Settings (reads .env)
-│   │   └── logging_config.py
-│   ├── services/
-│   │   ├── data_loader.py      # CSV loading + feature engineering
-│   │   ├── ml_pipeline.py      # Trains & saves all 5 models
-│   │   ├── model_registry.py   # Loads trained models into memory at startup
-│   │   └── db.py               # MongoDB connection
-│   └── routers/
-│       ├── health.py           # GET  /api/v1/health
-│       ├── predict.py          # POST /api/v1/predict/disruption, /anomaly, GET /forecast
-│       ├── data.py             # GET  /api/v1/data/consumption, /alerts  (Mongo-backed)
-│       └── dashboard.py        # GET  /api/v1/dashboard/clusters, /summary
-├── data/                       # Your file_*.csv monthly exports go here
-├── models/                     # Trained model artifacts (.pkl) — generated, not hand-written
-├── reports/                    # training_summary.json after each training run
-├── notebooks/                  # Original notebook, kept for reference/EDA
-├── train_pipeline.py           # Run this first — trains and saves every model
-├── requirements.txt
-├── .env.example                # Copy to .env and adjust
-└── .vscode/                    # Pre-configured run/debug buttons
+│   ├── core/                   # Settings, logging, and environment configuration
+│   ├── services/               # ML pipeline, model registry, cache, MongoDB
+│   └── routers/                # REST endpoints: health, predict, stream, dashboard, data, evaluate
+├── data/                       # 17 monthly CSV telemetry files (156k+ rows)
+├── models/                     # Trained ML models (.pkl): RF, Isolation Forest, SARIMA, KMeans
+├── reports/                    # evaluation_summary.json, training_summary.json, dashboard PNG
+├── notebooks/                  # Original exploratory data analysis notebook
+├── requirements/               # Modular dependency sets (base, ml, dev, prod)
+│   ├── base.txt                # Core FastAPI backend & server dependencies
+│   ├── ml.txt                  # Data science, Scikit-Learn, Statsmodels, Prophet
+│   ├── dev.txt                 # Testing (pytest, httpx) & linting tools
+│   ├── prod.txt                # Production database & Kafka streaming
+│   ├── optional.txt            # Deep learning & future model extensions
+│   └── README.md               # Requirements guide & install options
+├── start_dashboard.bat         # Windows 1-click launcher
+├── run_server.py               # Python unified launcher (starts API & opens browser)
+├── train_pipeline.py           # Model training pipeline
+├── evaluate_pipeline.py        # Model evaluation suite
+├── generate_reports.py         # Matplotlib report generator
+├── test_auth_rbac.py           # Automated test suite for RBAC & authentication
+├── test_server_live.py         # Live server end-to-end integration test suite
+└── requirements.txt            # Master requirements linker
 ```
 
 ## Prerequisites

@@ -1,0 +1,24 @@
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Git & IDEs
+.git/
+.gitignore
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+logs/*.log
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/

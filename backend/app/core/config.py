@@ -24,9 +24,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"
     API_PREFIX: str = "/api/v1"
-
-    # CORS — tighten in production; wildcard is fine only for local dev
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:8000"]
+    CORS_ORIGINS: List[str] = ["*"]
 
     # --- Paths (relative to project root) ---
     DATA_DIR: str = "data"
@@ -36,16 +34,6 @@ class Settings(BaseSettings):
     # --- MongoDB ---
     MONGO_URI: str = "mongodb://localhost:27017"
     MONGO_DB_NAME: str = "gridmind_ai"
-
-    # --- JWT Authentication ---
-    JWT_SECRET_KEY: str = "change-me-use-env-var-in-production-at-least-32-chars"
-    JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-
-    # --- Security / Brute-force protection ---
-    BRUTE_FORCE_MAX_ATTEMPTS: int = 5
-    BRUTE_FORCE_WINDOW_SECONDS: int = 600
 
     # --- ML pipeline params (kept identical to the original notebook) ---
     ISO_FOREST_CONTAMINATION: float = 0.05

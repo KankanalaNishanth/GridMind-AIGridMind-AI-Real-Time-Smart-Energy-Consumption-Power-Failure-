@@ -1,0 +1,4 @@
+# --- GridMind AI: Optional Model & Deep Learning Extensions ---
+xgboost>=2.0.0
+tensorflow>=2.15.0
+PyYAML>=6.0.0

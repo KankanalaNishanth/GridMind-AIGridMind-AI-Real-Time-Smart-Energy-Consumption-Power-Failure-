@@ -8,9 +8,8 @@ points to point this at a real broker later.
 """
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 
-from app.core.auth import require_security_admin_or_admin
 from app.services.data_cache import get_master_df
 from app.services.kafka_stream import run_simulation
 from app.services.model_registry import get_registry
@@ -20,10 +19,7 @@ router = APIRouter(prefix="/stream", tags=["Stream Simulation"])
 
 
 @router.post("/simulate")
-def simulate_stream(
-    n: int = Query(30, ge=1, le=500, description="Number of messages to simulate"),
-    current_user: dict = Depends(require_security_admin_or_admin)
-):
+def simulate_stream(n: int = Query(30, ge=1, le=500, description="Number of messages to simulate")):
     registry = get_registry()
     if not registry.is_ready():
         raise HTTPException(503, "Models not loaded — run train_pipeline.py first.")

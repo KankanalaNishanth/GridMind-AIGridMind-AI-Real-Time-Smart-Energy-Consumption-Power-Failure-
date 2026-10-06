@@ -1,0 +1,9 @@
+# --- GridMind AI: Production & Infrastructure Dependencies ---
+-r base.txt
+-r ml.txt
+
+# Database (MongoDB)
+pymongo>=4.6.0
+
+# Real Kafka broker streaming (optional)
+kafka-python>=2.0.2
